@@ -16,14 +16,14 @@ class WelcomeScreen extends StatelessWidget {
 
             // Logo
             Image.asset(
-              'assets/images/riverbin_logo.png',
+              'assets/images/creekbin_logo.png',
               height: 100,
             ),
             const SizedBox(height: 20),
 
             // Title
             const Text(
-              'RiverBin',
+              'CreekBin',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -34,7 +34,7 @@ class WelcomeScreen extends StatelessWidget {
 
             // Subtitle
             const Text(
-              '“Clean Rivers, Brighter Future.”',
+              '“Clean Water, Brighter Future.”',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,

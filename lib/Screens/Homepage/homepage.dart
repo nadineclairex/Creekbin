@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'analytic_screen.dart';
 import 'map_screen.dart';
 import 'notification_screen.dart';
 
@@ -13,6 +14,7 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
+    const AnalyticScreen(),
     const MapScreen(),
     const NotificationScreen(),
   ];
@@ -29,6 +31,10 @@ class _HomePageState extends State<HomePage> {
           });
         },
         items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.analytics),
+            label: 'Analytics',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.map),
             label: 'Map',

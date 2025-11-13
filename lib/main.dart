@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF648DDB), // highlight color
@@ -29,13 +29,11 @@ class MyApp extends StatelessWidget {
           ),
         ),
         outlinedButtonTheme: OutlinedButtonThemeData(
-          style: OutlinedButton.styleFrom(
-            foregroundColor: Colors.red,
-          ),
+          style: OutlinedButton.styleFrom(foregroundColor: Colors.red),
         ),
       ),
 
-      // 👇 define initial route and routes
+      // define initial route and routes
       initialRoute: '/welcome',
       routes: {
         '/welcome': (context) => const WelcomeScreen(),
