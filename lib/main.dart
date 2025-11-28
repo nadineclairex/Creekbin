@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'Screens/welcome_screen.dart';
-import 'Screens/homepage/notification_screen.dart';
+import 'Screens/navigationscreens/notification_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    // If Firebase initialization fails, log and continue — Firestore calls will fail until fixed.
+    // Ensure your platform firebase config files (google-services.json / GoogleService-Info.plist)
+    // or generated firebase_options.dart are present.
+    debugPrint('Firebase initializeApp error: $e');
+  }
+
   runApp(const MyApp());
 }
 

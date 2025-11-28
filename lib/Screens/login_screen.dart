@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'homepage/homepage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'NavigationScreens/dashboard_screen.dart';
+import 'NavigationScreens/navbar.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,6 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _showSubtitle = false;
+  bool _isLoading = false;
 
   String? _emailError;
   String? _passwordError;
@@ -22,40 +25,99 @@ class _LoginScreenState extends State<LoginScreen> {
   final RegExp passwordRegex =
       RegExp(r'^[A-Za-z0-9]{8,}$'); // at least 8 chars, letters+numbers only
 
-  void _validateAndLogin() {
+  Future<void> _validateAndLogin() async {
     setState(() {
       _emailError = null;
       _passwordError = null;
-
-      final emailText = emailController.text.trim();
-      final passwordText = passwordController.text;
-
-      if (emailText.isEmpty) {
-        _emailError = "Email is required";
-      } else if (!emailRegex.hasMatch(emailText)) {
-        _emailError = "Enter a valid email address (e.g., example@gmail.com)";
-      }
-
-      if (passwordText.isEmpty) {
-        _passwordError = "Password is required";
-      } else if (!passwordRegex.hasMatch(passwordText)) {
-        _passwordError =
-            "Password must be at least 8 characters\nand contain no special characters.";
-      }
-
-      if (_emailError == null && _passwordError == null) {
-        // ✅ Temporary: Navigate to HomePage
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
-
-        // (Optional) also show a success snackbar
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Login successful!')),
-        );
-      }
     });
+
+    final emailText = emailController.text.trim();
+    final passwordText = passwordController.text;
+
+    bool hasError = false;
+    if (emailText.isEmpty) {
+      _emailError = "Email is required";
+      hasError = true;
+    } else if (!emailRegex.hasMatch(emailText)) {
+      _emailError = "Enter a valid email address (e.g., example@gmail.com)";
+      hasError = true;
+    }
+
+    if (passwordText.isEmpty) {
+      _passwordError = "Password is required";
+      hasError = true;
+    } else if (!passwordRegex.hasMatch(passwordText)) {
+      _passwordError =
+          "Password must be at least 8 characters\nand contain no special characters.";
+      hasError = true;
+    }
+
+    if (hasError) {
+      setState(() {});
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('user')
+          .doc('N9A1SFKWpLli9g9VlZDl')
+          .get();
+
+      var userDoc = doc;
+      if (!userDoc.exists) {
+        // Fallback: try to find by email in case the doc id differs
+        final query = await FirebaseFirestore.instance
+            .collection('user')
+            .where('email', isEqualTo: emailText)
+            .limit(1)
+            .get();
+        if (query.docs.isNotEmpty) {
+          userDoc = query.docs.first;
+        }
+      }
+
+      if (!userDoc.exists) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User not found.')),
+        );
+        setState(() => _isLoading = false);
+        return;
+      }
+
+      final data = userDoc.data();
+      // debug
+      // ignore: avoid_print
+      print('login: found user doc id=${userDoc.id} data=$data');
+      final storedEmail = (data?['email'] ?? '').toString().trim();
+      final storedPassword = (data?['password'] ?? '').toString();
+
+      if (emailText != storedEmail || passwordText != storedPassword) {
+        setState(() {
+          _passwordError = 'Invalid email or password';
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Success
+      setState(() => _isLoading = false);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const Navbar()),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Login successful!')),
+      );
+    } catch (e) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login failed: $e')),
+      );
+    }
   }
 
   OutlineInputBorder _inputBorder(Color color) {
@@ -171,10 +233,20 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        onPressed: _validateAndLogin,
-                        child: const Text("Continue",
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 16)),
+                        onPressed: _isLoading ? null : _validateAndLogin,
+                        child: _isLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  valueColor:
+                                      AlwaysStoppedAnimation<Color>(Colors.white),
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text("Continue",
+                                style:
+                                    TextStyle(color: Colors.white, fontSize: 16)),
                       ),
                     ),
                     const SizedBox(height: 24),

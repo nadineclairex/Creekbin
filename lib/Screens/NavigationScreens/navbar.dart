@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'analytic_screen.dart';
+import 'dashboard_screen.dart';
 import 'map_screen.dart';
 import 'notification_screen.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class Navbar extends StatefulWidget {
+  const Navbar({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<Navbar> createState() => _NavbarState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _NavbarState extends State<Navbar> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    const AnalyticScreen(),
+    const DashboardScreen(),
     const MapScreen(),
     const NotificationScreen(),
   ];
@@ -32,8 +32,8 @@ class _HomePageState extends State<HomePage> {
         },
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.analytics),
-            label: 'Analytics',
+            icon: Icon(Icons.dashboard),
+            label: 'Dashboard',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.map),
@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
-            label: 'Notification',
+            label: 'Notifications',
           ),
         ],
       ),
