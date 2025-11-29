@@ -262,11 +262,7 @@ class _DashboardScreenState extends State<DashboardScreen>
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: false,
-        toolbarHeight: 64.0,
-
-        // REMOVE actions completely — we will put the menu in bottom
-        actions: const [],
-
+        automaticallyImplyLeading: false,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(10),
           child: Padding(
@@ -841,45 +837,48 @@ class RingPainter extends CustomPainter {
 
 // --- DRAWER (BURGER MENU) CONTENT ---
 Widget _buildDrawer(BuildContext context) {
-  return Drawer(
-    child: ListView(
-      padding: EdgeInsets.zero,
-      children: <Widget>[
-        // Drawer Header for branding/user info
-        const DrawerHeader(
-          decoration: BoxDecoration(
-            color: Color(0xFF648DDB),
-          ),
-          child: Text(
-            'User Settings',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 24,
+  return SizedBox(
+    width: 250, // reduced width — adjust this value as needed (e.g. 200)
+    child: Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          // Drawer Header for branding/user info
+          const DrawerHeader(
+            decoration: BoxDecoration(
+              color: Color(0xFF648DDB),
+            ),
+            child: Text(
+              'User Settings',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+              ),
             ),
           ),
-        ),
 
-        // Example Menu Item
-        //ListTile(
-        //leading: const Icon(Icons.settings),
-        //title: const Text('Settings'),
-        //onTap: () {
-        // Handle settings navigation
-        //Navigator.pop(context);
-        //},
-        //), huwag muna tanggalin ito
+          // Example Menu Item
+          //ListTile(
+          //leading: const Icon(Icons.settings),
+          //title: const Text('Settings'),
+          //onTap: () {
+          // Handle settings navigation
+          //Navigator.pop(context);
+          //},
+          //), huwag muna tanggalin ito
 
-        // LOGOUT OPTION
-        ListTile(
-          leading: const Icon(Icons.logout, color: Colors.red),
-          title: const Text('Logout', style: TextStyle(color: Colors.red)),
-          onTap: () {
-            // Close the drawer before showing the modal
-            Navigator.pop(context);
-            _showLogoutModal(context);
-          },
-        ),
-      ],
+          // LOGOUT OPTION
+          ListTile(
+            leading: const Icon(Icons.logout, color: Colors.black),
+            title: const Text('Logout', style: TextStyle(color: Colors.black)),
+            onTap: () {
+              // Close the drawer before showing the modal
+              Navigator.pop(context);
+              _showLogoutModal(context);
+            },
+          ),
+        ],
+      ),
     ),
   );
 }
